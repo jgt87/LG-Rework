@@ -1,0 +1,13 @@
+# Third-party upstream sources (reference only, not part of this project)
+slopbro/
+homebrew-channel-source/
+webos-debloat-upstream/
+downloads/
+
+# Build output (rebuild with: node build.mjs)
+dashboard/dist/
+node_modules/
+
+# Local tool state and agent notes
+dashboard/.impeccable/live/
+CLAUDE.md

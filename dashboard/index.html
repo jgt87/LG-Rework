@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>HDMI Home</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='black'/%3E%3Cpath d='M7 10h18v12H7z' fill='none' stroke='%23c4e6cb' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg class="symbol-library" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="port" viewBox="0 0 48 48"><path d="M10 13h28v15l-7 7H17l-7-7zM17 20h14M17 26h14"/></symbol>
+  <symbol id="pc" viewBox="0 0 48 48"><path d="M7 10h34v22H7zM18 40h12M24 32v8"/></symbol>
+  <symbol id="media" viewBox="0 0 48 48"><path d="M7 11h34v26H7z"/><path d="m21 18 9 6-9 6z"/></symbol>
+  <symbol id="web" viewBox="0 0 48 48"><circle cx="24" cy="24" r="17"/><ellipse cx="24" cy="24" rx="8" ry="17"/><path d="M7 24h34M10 15h28M10 33h28"/></symbol>
+  <symbol id="video" viewBox="0 0 48 48"><rect x="5" y="11" width="38" height="26" rx="7"/><path d="m20 18 11 6-11 6z"/></symbol>
+  <symbol id="settings" viewBox="-6 -6 60 60"><path d="M17.11 7.37L20.26 6.39L20.94 2.21L27.06 2.21L27.74 6.39L30.89 7.37L30.89 7.37L33.80 8.90L37.24 6.43L41.57 10.76L39.10 14.20L40.63 17.11L40.63 17.11L41.61 20.26L45.79 20.94L45.79 27.06L41.61 27.74L40.63 30.89L40.63 30.89L39.10 33.80L41.57 37.24L37.24 41.57L33.80 39.10L30.89 40.63L30.89 40.63L27.74 41.61L27.06 45.79L20.94 45.79L20.26 41.61L17.11 40.63L17.11 40.63L14.20 39.10L10.76 41.57L6.43 37.24L8.90 33.80L7.37 30.89L7.37 30.89L6.39 27.74L2.21 27.06L2.21 20.94L6.39 20.26L7.37 17.11L7.37 17.11L8.90 14.20L6.43 10.76L10.76 6.43L14.20 8.90L17.11 7.37Z"/><circle cx="24" cy="24" r="7"/></symbol>
+  <symbol id="controller" viewBox="0 0 48 48"><path d="M16 13h16c6 0 8 6 10 19 1 6-4 9-8 4l-5-5H19l-5 5c-4 5-9 2-8-4 2-13 4-19 10-19zM13 22h10M18 17v10"/><circle cx="31" cy="21" r="1.5"/><circle cx="36" cy="26" r="1.5"/></symbol>
+  <symbol id="home" viewBox="0 0 48 48"><path d="m7 22 17-15 17 15M12 19v22h9V28h7v13h8V19"/></symbol>
+  <symbol id="apple-tv-logo" viewBox="0 5.5 24 13"><path d="M20.57 17.735h-1.815l-3.34-9.203h1.633l2.02 5.987c.075.231.273.9.586 2.012l.297-.997.33-1.006 2.094-6.004H24zm-5.344-.066a5.76 5.76 0 0 1-1.55.207c-1.23 0-1.84-.693-1.84-2.087V9.646h-1.063V8.532h1.121V7.081l1.476-.602v2.062h1.707v1.113H13.38v5.805c0 .446.074.75.214.932.14.182.396.264.75.264.207 0 .495-.041.883-.115zm-7.29-5.343c.017 1.764 1.55 2.358 1.567 2.366-.017.042-.248.842-.808 1.658-.487.71-.99 1.418-1.79 1.435-.783.016-1.03-.462-1.93-.462-.89 0-1.17.445-1.913.478-.758.025-1.344-.775-1.838-1.484-.998-1.451-1.765-4.098-.734-5.88.51-.89 1.426-1.451 2.416-1.46.75-.016 1.468.512 1.93.512.461 0 1.327-.627 2.234-.536.38.016 1.452.157 2.136 1.154-.058.033-1.278.743-1.27 2.219M6.468 7.988c.404-.495.685-1.18.61-1.864-.585.025-1.294.388-1.723.883-.38.437-.71 1.138-.619 1.806.652.05 1.328-.338 1.732-.825Z"/></symbol>
+  <symbol id="youtube-logo" viewBox="0 3.2 24 17.6"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></symbol>
+</svg>
+<div class="preview-banner" id="preview-banner" hidden>Browser preview. TV controls are simulated.</div>
+<main class="shell" id="shell">
+  <header class="masthead">
+    <h1 class="visually-hidden">Inputs</h1>
+    <nav class="tools" aria-label="TV controls">
+      <button id="lg-home" data-app="com.webos.app.home" data-label="LG Home" data-busy="Opening…"><svg aria-hidden="true"><use href="#home"/></svg><span data-status>LG Home</span></button>
+      <button id="game" data-app="com.webos.app.gameoptimizer" data-label="Game Optimizer" data-busy="Opening…"><svg aria-hidden="true"><use href="#controller"/></svg><span data-status>Game Optimizer</span><span class="remote-key yellow" title="Yellow button"></span></button>
+      <button id="tv-settings" data-app="com.palm.app.settings" data-label="TV Settings" data-busy="Opening…"><svg aria-hidden="true"><use href="#settings"/></svg><span data-status>TV Settings</span><span class="remote-key blue" title="Blue button"></span></button>
+    </nav>
+    <div class="clock"><span id="clock-date"></span><time id="clock-time">--:--</time></div>
+  </header>
+  <section class="sources" aria-label="HDMI inputs">
+    <button class="source xbox" id="xbox" data-app="com.webos.app.hdmi2" data-label="Xbox Series X" data-busy="Switching to HDMI 2…" aria-describedby="xbox-input">
+      <div class="console-art" aria-hidden="true">
+        <img src="xsx.png" alt="" width="1000" height="1000" decoding="async">
+      </div>
+      <span class="source-copy"><strong>Xbox Series X</strong><span class="source-action"><span id="xbox-input" data-status>Switch to HDMI 2</span></span></span>
+    </button>
+    <div class="other-inputs">
+      <button class="source secondary" id="hdmi1" data-app="com.webos.app.hdmi1" data-label="HDMI 1" data-busy="Switching…"><svg aria-hidden="true"><use href="#port"/></svg><span><strong>HDMI 1</strong><span class="secondary-label" data-status></span></span></button>
+      <button class="source secondary" id="hdmi3" data-app="com.webos.app.hdmi3" data-label="HDMI 3" data-busy="Switching…"><svg aria-hidden="true"><use href="#port"/></svg><span><strong>HDMI 3</strong><span class="secondary-label" data-status></span></span></button>
+      <button class="source secondary" id="hdmi4" data-app="com.webos.app.hdmi4" data-label="HDMI 4" data-busy="Switching…"><svg aria-hidden="true"><use href="#port"/></svg><span><strong>HDMI 4</strong><span class="secondary-label" data-status></span></span></button>
+    </div>
+  </section>
+  <nav class="apps" aria-label="Apps">
+    <button class="app-tile" id="apple-tv" data-app="com.apple.appletv" data-label="Apple TV" data-busy="Opening Apple TV…"><svg class="brand-logo apple-logo" aria-hidden="true"><use href="#apple-tv-logo"/></svg><span data-status>Apple TV</span></button>
+    <button class="app-tile" id="youtube" data-app="youtube.leanback.v4" data-label="YouTube" data-busy="Opening YouTube…"><svg class="brand-logo" aria-hidden="true"><use href="#youtube-logo"/></svg><span data-status>YouTube</span></button>
+    <button class="app-tile" id="browser" data-app="com.webos.app.browser" data-label="Browser" data-busy="Opening Browser…"><svg aria-hidden="true"><use href="#web"/></svg><span data-status>Browser</span></button>
+  </nav>
+  <footer><span><span class="keycap">Back</span>returns to Xbox</span></footer>
+</main>
+<div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+<div id="sleep-cover" class="sleep-cover" aria-hidden="true" hidden></div>
+<script src="ports.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

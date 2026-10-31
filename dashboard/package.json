@@ -1,0 +1,11 @@
+{
+  "name": "lg-hdmi-home",
+  "private": true,
+  "version": "1.0.13",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/dashboard.test.mjs",
+    "preview": "node preview.mjs"
+  }
+}

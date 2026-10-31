@@ -1,0 +1,257 @@
+{
+  "evidence_id": "ev_031043e0b825a18f6a16fc49327eca05dcfa74b611ec921177f9a889864bec55",
+  "subject": null,
+  "provider": {
+    "id": "rea-playwright-browser-scenario",
+    "name": "REA Playwright browser scenario capture provider",
+    "version": "1"
+  },
+  "analysis_profile": null,
+  "predicate_type": "rea.browser-scenario-capture",
+  "operation": "capture_browser_scenario",
+  "parameters": {
+    "browser": {
+      "mode": "launch",
+      "executable_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "headless": true
+    },
+    "start_url": {
+      "url": "http://127.0.0.1:8787/",
+      "query": []
+    },
+    "environment": {
+      "viewport": {
+        "width": 1920,
+        "height": 1080,
+        "device_scale_factor": 1
+      },
+      "locale": "en-GB",
+      "timezone": "Europe/Amsterdam",
+      "color_scheme": "light",
+      "reduced_motion": "no-preference",
+      "service_workers": "block"
+    },
+    "actions": [
+      {
+        "step_id": "settle",
+        "action": "wait_for_timeout",
+        "duration_ms": 250
+      }
+    ],
+    "storage": {
+      "cookies": [],
+      "local_storage": [],
+      "session_storage": []
+    },
+    "secrets": [],
+    "capture": {
+      "after_each_step": [],
+      "at_end": [
+        "screenshot"
+      ],
+      "events": [
+        "console",
+        "page-errors"
+      ],
+      "network": {
+        "request_body": false,
+        "response_body": false,
+        "header_values": false
+      },
+      "limits": {
+        "max_events": 10000,
+        "max_event_allocation_bytes": 4194304,
+        "max_total_event_allocation_bytes": 16777216,
+        "max_network_transactions": 1024,
+        "max_network_body_bytes": 65536,
+        "max_network_body_allocation_bytes": 1048576,
+        "max_network_header_allocation_bytes": 1048576,
+        "max_network_metadata_allocation_bytes": 1048576
+      }
+    },
+    "scenario_sha256": "6f8bc9e9fb5cd97849958a634a229985c12d4281e0de33a64e52f908851412e4"
+  },
+  "raw_result": null,
+  "normalized_result": {
+    "browser": {
+      "mode": "launch",
+      "process_ownership": "provider-owned",
+      "cleanup": "terminated-owned-process",
+      "product": "Chromium",
+      "version": "156.0.8078.76"
+    },
+    "scenario": {
+      "start_origin": "http://127.0.0.1:8787",
+      "action_count": 1,
+      "secret_references": [],
+      "network_content": {
+        "request_body": false,
+        "response_body": false,
+        "header_values": false
+      },
+      "event_families": [
+        "console",
+        "page-errors"
+      ],
+      "limits": {
+        "max_events": 10000,
+        "max_event_allocation_bytes": 4194304,
+        "max_total_event_allocation_bytes": 16777216,
+        "max_network_transactions": 1024,
+        "max_network_body_bytes": 65536,
+        "max_network_body_allocation_bytes": 1048576,
+        "max_network_header_allocation_bytes": 1048576,
+        "max_network_metadata_allocation_bytes": 1048576
+      }
+    },
+    "duration_ms": 965,
+    "steps": [
+      {
+        "step_index": 0,
+        "step_id": "scenario_start",
+        "action": "goto_start",
+        "elapsed_ms": 445,
+        "before_url": {
+          "url": "about:blank",
+          "origin": null,
+          "query_parameter_names": [],
+          "redacted": false
+        },
+        "after_url": {
+          "url": "http://127.0.0.1:8787/",
+          "origin": "http://127.0.0.1:8787",
+          "query_parameter_names": [],
+          "redacted": false
+        },
+        "event_sequence_start": 1,
+        "event_sequence_end": 0,
+        "artifacts": {
+          "screenshot": {
+            "state": "not_requested"
+          },
+          "dom": {
+            "state": "not_requested"
+          },
+          "accessibility": {
+            "state": "not_requested"
+          },
+          "url": {
+            "state": "not_requested"
+          },
+          "history": {
+            "state": "not_requested"
+          },
+          "storage": {
+            "state": "not_requested"
+          }
+        },
+        "completeness": {
+          "status": "complete",
+          "equality_eligible": true,
+          "missing_sections": [],
+          "truncated_sections": []
+        },
+        "status": "completed",
+        "error": null
+      },
+      {
+        "step_index": 1,
+        "step_id": "settle",
+        "action": "wait_for_timeout",
+        "elapsed_ms": 345,
+        "before_url": {
+          "url": "http://127.0.0.1:8787/",
+          "origin": "http://127.0.0.1:8787",
+          "query_parameter_names": [],
+          "redacted": false
+        },
+        "after_url": {
+          "url": "http://127.0.0.1:8787/",
+          "origin": "http://127.0.0.1:8787",
+          "query_parameter_names": [],
+          "redacted": false
+        },
+        "event_sequence_start": 1,
+        "event_sequence_end": 0,
+        "artifacts": {
+          "screenshot": {
+            "state": "captured",
+            "value": {
+              "sha256": "475382a56ec7a52f4804c33a43960a5d3c9bff13ea0bae632539e1a0112fa83f",
+              "bytes": 215236,
+              "media_type": "image/png"
+            }
+          },
+          "dom": {
+            "state": "not_requested"
+          },
+          "accessibility": {
+            "state": "not_requested"
+          },
+          "url": {
+            "state": "not_requested"
+          },
+          "history": {
+            "state": "not_requested"
+          },
+          "storage": {
+            "state": "not_requested"
+          }
+        },
+        "completeness": {
+          "status": "complete",
+          "equality_eligible": true,
+          "missing_sections": [],
+          "truncated_sections": []
+        },
+        "status": "completed",
+        "error": null
+      }
+    ],
+    "events": {
+      "retained": 0,
+      "dropped": 0,
+      "items": [],
+      "omissions": {
+        "by_kind": [],
+        "network_transactions": [],
+        "network_transaction_range": null
+      }
+    },
+    "completeness": {
+      "status": "complete",
+      "equality_eligible": true,
+      "missing_sections": [],
+      "truncated_sections": []
+    },
+    "limitations": [
+      "Event sequence records provider receipt order; simultaneous browser causality is not inferred.",
+      "Network content is retained only when selected; Playwright response-body bytes are API results and are not guaranteed to match wire bytes.",
+      "Request bytes are limited to what Playwright exposes; not_exposed does not establish body absence or multipart file coverage.",
+      "Network content reads settle within 5 seconds each and the observer does not request bodies from unfinished responses.",
+      "Playwright scenario events do not expose request initiator stacks; receipt order does not prove causality.",
+      "Storage values are hashed only after declared-secret redaction."
+    ]
+  },
+  "confidence": "observed",
+  "authority": "controlled-replay",
+  "environment": {
+    "id": "Chromium@156.0.8078.76",
+    "platform": "unknown",
+    "architecture": "unknown",
+    "isolation": "process"
+  },
+  "limitations": [
+    "Artifact identity is unavailable for this observation.",
+    "Event sequence records provider receipt order; simultaneous browser causality is not inferred.",
+    "Network content is retained only when selected; Playwright response-body bytes are API results and are not guaranteed to match wire bytes.",
+    "Request bytes are limited to what Playwright exposes; not_exposed does not establish body absence or multipart file coverage.",
+    "Network content reads settle within 5 seconds each and the observer does not request bodies from unfinished responses.",
+    "Playwright scenario events do not expose request initiator stacks; receipt order does not prove causality.",
+    "Storage values are hashed only after declared-secret redaction.",
+    "Browser host platform and architecture were not observed."
+  ],
+  "relationship_coverage": null,
+  "locations": [],
+  "evidence_links": []
+}

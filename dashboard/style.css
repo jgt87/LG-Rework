@@ -1,0 +1,67 @@
+:root{color-scheme:dark;--black:#000;--surface:#121212;--surface-focus:#262626;--ink:#f2f2f2;--muted:#a6a6a6;--focus:#f2f2f2;--line:#3d3d3d;--ring:3px;--key-yellow:#f2c94c;--key-blue:#4a90e2}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{width:100%;height:100%;margin:0;background:var(--black);color:var(--ink)}
+body{font-family:"LG Smart UI","Segoe UI",sans-serif;overflow:hidden;-webkit-user-select:none;user-select:none}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.symbol-library{position:absolute;width:0;height:0;overflow:hidden}
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.shell{width:100%;max-width:1920px;height:100%;margin:0 auto;padding:5vh 7.5vw 4.5vh;display:flex;flex-direction:column;position:relative;transition:opacity 200ms ease-out}
+.masthead{--header-height:calc(1.2em + 24px);display:flex;align-items:center;justify-content:space-between;gap:24px;font-size:clamp(20px,1.35vw,26px);line-height:1.2;margin-bottom:2.6vh}
+.clock{display:flex;align-items:center;height:var(--header-height);gap:20px;font:inherit;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.clock time{color:var(--ink)}
+.sources{display:grid;grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);gap:2.1vw;min-height:0;flex:1;max-height:51vh}
+body.no-ports .sources{grid-template-columns:1fr}
+body.no-ports .other-inputs{display:none}
+/* Focus only: the pointer moves focus on mouseenter, so :hover would light a second control. */
+.source{--lift:1.02;background:var(--surface);border:var(--ring) solid transparent;border-radius:12px;position:relative;text-align:left;outline:none;transition:transform 80ms cubic-bezier(.16,1,.3,1)}
+.source:focus{background-color:var(--surface-focus);border-color:var(--focus);transform:scale(var(--lift));z-index:2}
+.xbox{--surface:#101411;--surface-focus:#1c2e22;--accent:#c4e6cb;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:3.2vw;background-image:linear-gradient(200deg,rgba(255,255,255,.07),rgba(255,255,255,0) 55%)}
+.console-art{position:absolute;right:-1.2vw;top:0;bottom:0;margin:auto 0;width:60%;height:84%;pointer-events:none}
+body.no-ports .console-art{width:42%}
+.console-art img{height:100%;width:100%;object-fit:contain}
+.source-copy{display:flex;flex-direction:column;position:relative;z-index:1}
+.xbox strong{font-size:clamp(30px,3vw,58px);letter-spacing:-.035em;font-weight:500;line-height:1.12;max-width:100%}
+.source-action{font-size:clamp(18px,1.45vw,28px);margin-top:3.6vh;color:var(--muted);transition:none}
+.xbox:focus .source-action{color:var(--accent)}
+.xbox:focus{background-color:#0d1b12;background-image:radial-gradient(ellipse at top right,rgba(69,105,77,.48),rgba(69,105,77,0) 65%)}
+/* Three fixed tracks: hiding unused ports leaves the remaining tiles at their normal size. */
+.other-inputs{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:1.8vh;min-height:0}
+.secondary{--lift:1.035;display:flex;align-items:center;gap:1.5vw;padding:1.6vw 2vw}
+.secondary:not(.has-icon)>svg:first-child{display:none}
+.secondary>svg:first-child{width:3.2vw;height:3.2vw;min-width:34px;min-height:34px;fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round;transition:none}
+.secondary:focus>svg:first-child{stroke:var(--ink)}
+.secondary>span:nth-child(2){display:flex;flex-direction:column;gap:.65vh}
+.secondary strong{font-size:clamp(22px,2vw,38px);font-weight:400;letter-spacing:-.015em}
+.secondary-label{font-size:clamp(18px,1.25vw,24px);color:var(--muted)}
+.secondary-label:empty{display:none}
+.is-launching [data-status]{color:var(--ink);animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.5}}
+.tools{--tool-padding:12px;display:flex;align-items:center;gap:1.2vw;font:inherit;margin-left:calc(0px - var(--tool-padding) - var(--ring) - .15em)}
+.tools button{display:flex;align-items:center;justify-content:center;height:var(--header-height);gap:.5em;background:none;border:var(--ring) solid transparent;border-radius:10px;outline:none;padding:0 var(--tool-padding);font:inherit;white-space:nowrap;color:var(--muted);transition:none}
+.tools button:focus{background-color:var(--surface-focus);border-color:var(--focus);color:var(--ink)}
+.tools svg{width:1.15em;height:1.15em;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+/* Normalize the gear's wider artwork to the home/controller footprint; retain stroke weight. */
+#tv-settings svg{stroke-width:2.125}
+.apps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2.1vw;margin-top:2.6vh;flex:none}
+.app-tile{display:flex;align-items:center;justify-content:flex-start;gap:1.1vw;height:13vh;min-height:96px;min-width:0;padding:1.2vw 2vw;background:var(--surface);border:var(--ring) solid transparent;border-radius:12px;text-align:left;font-size:clamp(22px,1.65vw,32px);outline:none;transition:none}
+.app-tile:focus{background:var(--surface-focus);border-color:var(--focus)}
+.app-tile svg{width:2.3vw;height:2.3vw;min-width:32px;min-height:32px;flex:none;fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+.app-tile:focus svg{stroke:var(--ink)}
+.app-tile .brand-logo{stroke-width:.85}
+.app-tile .apple-logo{width:3.2vw;min-width:44px;stroke-width:.6}
+.app-tile [data-status]{min-width:0;overflow-wrap:break-word}
+.remote-key{width:.65vw;height:.65vw;min-width:12px;min-height:12px;border-radius:50%;margin-left:.15vw}
+.remote-key.yellow{background:var(--key-yellow)}
+.remote-key.blue{background:var(--key-blue)}
+footer{display:flex;align-items:center;margin-top:auto;padding-top:3.2vh;font-size:clamp(18px,1.25vw,24px);color:var(--muted)}
+.keycap{display:inline-block;border:1px solid var(--line);border-radius:5px;padding:1px 8px;margin-right:12px}
+.notice{position:fixed;bottom:4vh;left:50%;transform:translateX(-50%);padding:18px 28px;max-width:80vw;background:#e6eee8;color:#142119;border-radius:8px;font-size:clamp(16px,1.5vw,28px);text-align:center;z-index:5}
+.preview-banner{position:fixed;left:0;top:0;right:0;text-align:center;padding:6px;background:#263b2c;color:#f0f3f0;font-size:13px;z-index:4}
+.sleep-cover{position:fixed;inset:0;background:#000;z-index:10;cursor:none}
+body.is-idle .shell{opacity:.22}
+body.is-busy button[data-app]:not(.is-launching){opacity:.45}
+@media(max-width:1200px){.masthead{flex-wrap:wrap;gap:12px}.clock{margin-left:auto}}
+@media(max-aspect-ratio:1/1){body{overflow:auto}.shell{height:auto;min-height:100vh;padding:64px 7vw 32px}.masthead{margin-bottom:20px;font-size:18px}.sources{grid-template-columns:1fr;max-height:none;gap:18px}.xbox{min-height:310px;padding:28px}.console-art{width:44%;height:76%;right:10px}.xbox strong{font-size:35px}.source-action{margin-top:27px}.other-inputs{grid-template-rows:none;grid-auto-rows:92px;gap:12px}.secondary{padding:16px 22px;gap:18px}.tools{--tool-padding:8px;gap:8px;flex-wrap:wrap}footer{font-size:13px;margin-top:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.source:focus,.tools button:focus{transform:none}}
+@media(max-aspect-ratio:1/1){.apps{grid-template-columns:1fr;gap:12px;margin-top:18px}.app-tile{height:84px;min-height:84px;padding:16px 22px;gap:18px;font-size:22px}.app-tile svg{width:32px;height:32px}}

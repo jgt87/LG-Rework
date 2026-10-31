@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "sdx_sha256": "0387861a3e80e2dd4b1abd24e8a6f1a28c3bb20756f0fa93fd54c5b5cdf5a0cd",
+  "units": {
+    "com.webos.service.mycar.service": {
+      "active": "active"
+    },
+    "com.webos.service.camera.service": {
+      "active": "active"
+    },
+    "com.webos.service.familycare.service": {
+      "active": "inactive"
+    },
+    "com.webos.service.buddyconnector.service": {
+      "active": "inactive"
+    },
+    "contentminer.service": {
+      "active": "active"
+    },
+    "dmost.service": {
+      "active": "active"
+    },
+    "rdxd.service": {
+      "active": "active"
+    },
+    "remotediag.service": {
+      "active": "inactive"
+    },
+    "remotelogger.service": {
+      "active": "active"
+    },
+    "service-logger.service": {
+      "active": "active"
+    },
+    "uploadd.service": {
+      "active": "failed"
+    },
+    "voiceconductor.service": {
+      "active": "active"
+    },
+    "voiceinput.service": {
+      "active": "active"
+    }
+  },
+  "binaries": {
+    "/usr/sbin/com.webos.service.mycar": "d540f2e0d3c5c03ab42a51b7a90361d56cb15e5b760cef79a400935a1bdcb9db",
+    "/usr/sbin/com.webos.service.camera2": "ce8de3bca548b5457d5cc64a36386b9b3a0022a77170c0b7208ef402bcd59c65",
+    "/usr/sbin/contentminer": "c93c584bdaa751b579ed71a2b006dd7d0196a9df8df663b47745e9158d0e5cff",
+    "/usr/sbin/dmost": "df9430aaa9faad36b9309e10c04059829ba6abf16bb2b9586b290aaa68f56fad",
+    "/usr/sbin/rdxd": "dc52972fbf11330709785cb9a5620ec0a60628c5e6d4e78d4212457043ec2266",
+    "/usr/sbin/remotediag": "27b1882bef06ab4f6e2ec5922fa315859293b9a8ace5f4f0132fd5b0abf23ae3",
+    "/usr/sbin/remotelogger": "fab55bf9bbf834d45e2b2abb026c86163277761724aa2bc62015a69e2ba0ef75",
+    "/usr/sbin/service-logger": "66e6cb50c04aa50c9d5e606c45a716892d0ee5448114e10e109e769683ee6075",
+    "/usr/sbin/uploadd": "7cdffed7e7b8562f8e0072934bfe35928ac8646ff832533d208cb5b63edbce84",
+    "/usr/sbin/voiceconductor": "419e1c072bbc92089be192391437f538dfa3a4df26d5efac087aaa276dfc4f0b",
+    "/usr/sbin/voiceinput": "d2cf42bad4aa02bdf960581a9114dfc5ce791b272e8713e7a5aa919a693f3f5d",
+    "/usr/sbin/voiceinput_network": "45e1de7081b7bd8e489e4848c82b125523bbb5be63ea2a5b33dc88b472ccf1ff",
+    "/usr/sbin/voiceinput_sound": "508fbe9be73a20d59af070e0cfec113183acdefa2bb7724397eac6a50b81ef1b",
+    "/usr/sbin/voiceinput_preprocessor": "43b4a84e7701fccbd3305099c2250eca86cdf76714bd7d619e0bc96d7ab4020c",
+    "/usr/sbin/voiceinput_hidraw": "2b9f9e318fba385801e160349159cb3238d1fc370136a385413168170879e28b",
+    "/usr/sbin/voiceclick": "fe40104fc4f8f11fb8dd5f3f64c60fb70172bd68e0a713d212c9f61e00704229",
+    "/usr/sbin/trigger_alexa": "6613a82076c956d0744abc1497f41295228110753cff43c9adf030541a62ed07",
+    "/usr/sbin/sportsalarm": "a3f7716678679f9df939c3811ccd6a14dc2754039a8bf7424d0e5474f1d542d9",
+    "/usr/sbin/nlpmanager": "8e04012e8a93aaf4bc7d3abf286cbdb3526316fc932ce966c366ce643c27d6b8",
+    "/usr/sbin/iconnectivity": "aba22490278a7697b26e2aa48b0b3ef2c2872366f6bde4d1e653234f791bd74e",
+    "/usr/sbin/performer": "f670776ed6a99c76ddf812b6d56a7d6a39e74af1d9849629f32eef78cc349816",
+    "/usr/palm/services/com.webos.service.buddyconnector/com.webos.service.buddyconnector": "0590b0a2cfb097c6ef0b9e2cacb866e4aa97d888887cb085a27c69b0ac83adb5"
+  },
+  "core": {
+    "sam.service": "active",
+    "surface-manager.service": "active",
+    "webapp-mgr.service": "active",
+    "connman.service": "active",
+    "audiod.service": "active",
+    "audiooutputd.service": "active",
+    "videooutputd.service": "active",
+    "panelcontroller.service": "active",
+    "devmode.service": "active",
+    "alwaysready.service": "active",
+    "tvdataexchanger.service": "active",
+    "lginput2.service": "active"
+  },
+  "owned_masks": [
+    "com.webos.service.mycar.service",
+    "com.webos.service.camera.service",
+    "com.webos.service.familycare.service",
+    "com.webos.service.buddyconnector.service",
+    "contentminer.service",
+    "dmost.service",
+    "rdxd.service",
+    "remotediag.service",
+    "remotelogger.service",
+    "service-logger.service",
+    "uploadd.service",
+    "voiceconductor.service",
+    "voiceinput.service"
+  ],
+  "owned_mounts": [
+    "/usr/sbin/com.webos.service.mycar",
+    "/usr/sbin/com.webos.service.camera2",
+    "/usr/sbin/contentminer",
+    "/usr/sbin/dmost",
+    "/usr/sbin/rdxd",
+    "/usr/sbin/remotediag",
+    "/usr/sbin/remotelogger",
+    "/usr/sbin/service-logger",
+    "/usr/sbin/uploadd",
+    "/usr/sbin/voiceconductor",
+    "/usr/sbin/voiceinput",
+    "/usr/sbin/voiceinput_network",
+    "/usr/sbin/voiceinput_sound",
+    "/usr/sbin/voiceinput_preprocessor",
+    "/usr/sbin/voiceinput_hidraw",
+    "/usr/sbin/voiceclick",
+    "/usr/sbin/trigger_alexa",
+    "/usr/sbin/sportsalarm",
+    "/usr/sbin/nlpmanager",
+    "/usr/sbin/iconnectivity",
+    "/usr/sbin/performer",
+    "/usr/palm/services/com.webos.service.buddyconnector/com.webos.service.buddyconnector"
+  ]
+}
