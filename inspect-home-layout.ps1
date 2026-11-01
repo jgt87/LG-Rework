@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$tvAddress = '192.168.1.44'
+$tvAddress = (& (Join-Path $PSScriptRoot 'tv-address.ps1'))
 $report = Join-Path $PSScriptRoot 'home-layout-inventory.txt'
 $remoteCommand = @'
 echo '=== Home layout (read only) ==='

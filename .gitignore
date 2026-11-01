@@ -11,3 +11,8 @@ node_modules/
 # Local tool state and agent notes
 dashboard/.impeccable/live/
 CLAUDE.md
+
+# Per-user onboarding output
+device.local.json
+*-profile-submission.zip
+__pycache__/

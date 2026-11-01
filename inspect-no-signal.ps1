@@ -1,5 +1,5 @@
 $ErrorActionPreference='Stop'
-$signalTV='192.168.1.44'
+$signalTV=(& (Join-Path $PSScriptRoot 'tv-address.ps1'))
 & scp -O (Join-Path $PSScriptRoot 'inspect-no-signal.py') "root@${signalTV}:/tmp/lg-inspect-no-signal.py"
 if($LASTEXITCODE -ne 0){throw 'Inspection upload failed. No inspection executed.'}
 & ssh "root@$signalTV" 'python3 /tmp/lg-inspect-no-signal.py' | Tee-Object -FilePath (Join-Path $PSScriptRoot 'no-signal-inventory.json')

@@ -5,7 +5,7 @@ Updated: 2026-11-01
 | Item | Value |
 |---|---|
 | TV | LG OLED48C24LA |
-| Address | `192.168.1.44` |
+| Address | `192.168.1.44` (launchers use `device.local.json` instead when `init.ps1 -Action connect` has saved one) |
 | Reviewed firmware / SDK | `33.31.68` / `10.3.1` |
 | Local working folder | `C:\Files\Apps\LG` |
 | Custom dashboard | HDMI Home, `com.local.hdmihome`; 1.0.3 previously installed, 1.0.4 review design built locally pending installation |
@@ -23,6 +23,7 @@ Updated: 2026-11-01
 | LG Home layout | Trial applied successfully; rows removed and banner hidden. Visual check still required. |
 | Additional service cleanup | Latest trial succeeded: selected units stopped/masked, executable overrides verified, no target processes running. SDX hash unchanged and process running; previously active core services remain active. Nudge remains excluded. **Resume at step 3: physical validation before persistence.** |
 | Layout/service startup persistence | Not yet confirmed installed. |
+| Device profiles / onboarding | Added locally: guards also accept maintainer-reviewed profiles from `profiles/lg-reviewed-profiles.json`; this TV stays built in. Next launcher run per component uploads the registry; re-run `install-startup`/`enable` to copy it beside persistent scripts (not required for this TV). Optional baseline: `.\init.ps1 -Action check` should show every component as `matches`. |
 
 Commands below run in PowerShell from the working folder. SSH/SCP will ask for the TV root password; enter it interactively. Do not put passwords in scripts or reports.
 

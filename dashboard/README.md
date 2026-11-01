@@ -30,6 +30,8 @@ Version 1.0.12 darkens the focused Xbox tile and replaces its broad gradient wit
 
 Version 1.0.13 reduces focus expansion from 160ms to 80ms with a faster-start easing curve. Borders, fills, action text and icons now change immediately on focus, avoiding continuous color repainting across the large Xbox surface. Idle dimming and busy feedback remain unchanged. This is a configured animation reduction, not a measured physical-TV frame-rate claim.
 
+Version 1.0.14 adds onboarding for other TV models. The installer and the Home router accept a TV listed in `profiles/lg-reviewed-profiles.json` as well as the reference TV, and the launchers read the TV address saved by `init.ps1 -Action connect`. The app itself is unchanged.
+
 Version 1.0.5 applies `font-variant-numeric: tabular-nums` to the entire date/time group, so both the date and clock inherit equal-width digits.
 
 In PowerShell on the computer, with the TV awake and Homebrew Channel SSH enabled:

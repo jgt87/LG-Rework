@@ -1,7 +1,7 @@
 param([ValidateSet('apply','verify','restore','install-startup','self-test')][string]$Action='verify')
 $ErrorActionPreference='Stop'
-$debloatTV='192.168.1.44'
-& scp -O (Join-Path $PSScriptRoot 'debloat-tv.py') (Join-Path $PSScriptRoot 'debloat-reviewed-units.json') "root@${debloatTV}:/tmp/"
+$debloatTV=(& (Join-Path $PSScriptRoot 'tv-address.ps1'))
+& scp -O (Join-Path $PSScriptRoot 'debloat-tv.py') (Join-Path $PSScriptRoot 'debloat-reviewed-units.json') (Join-Path $PSScriptRoot 'profiles\lg-reviewed-profiles.json') "root@${debloatTV}:/tmp/"
 if($LASTEXITCODE -ne 0){throw 'Upload failed. No service cleanup executed.'}
 & ssh "root@$debloatTV" "python3 /tmp/debloat-tv.py $Action --review /tmp/debloat-reviewed-units.json 2>&1" | Tee-Object -FilePath (Join-Path $PSScriptRoot "debloat-tv-$Action.txt")
 $debloatExit=$LASTEXITCODE

@@ -21,6 +21,43 @@ EXPECTED = '8f0bf119efe54285c44e15ed9f608da9f38dd94178e73ec5441f22df3d5aa9d7'
 MARKER = '# Managed by lg-home-layout'
 
 
+REFERENCE_TV = ('OLED48C24LA', '33.31.68', '10.3.1')
+PROFILES_FILE = 'lg-reviewed-profiles.json'
+
+
+def reviewed_tv(info, component):
+    """Exact model/firmware/SDK match: the reference TV, or a maintainer-reviewed profile
+    from profiles/lg-reviewed-profiles.json that lists this component."""
+    key = tuple(info.get(name) for name in ('modelName', 'firmwareVersion', 'sdkVersion'))
+    if key == REFERENCE_TV:
+        return True
+    if not all(isinstance(part, str) and part for part in key):
+        return False
+    try:
+        registry = json.loads(Path(__file__).resolve().with_name(PROFILES_FILE).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return False
+    profiles = registry.get('profiles') if isinstance(registry, dict) else None
+    for profile in profiles if isinstance(profiles, list) else []:
+        if not isinstance(profile, dict) or not isinstance(profile.get('components'), list):
+            continue
+        if (profile.get('modelName'), profile.get('firmwareVersion'), profile.get('sdkVersion')) == key \
+                and component in profile['components']:
+            return True
+    return False
+
+
+def keep_profiles(directory):
+    """Copy an uploaded reviewed-profile registry next to the persistent script."""
+    source = Path(__file__).resolve().with_name(PROFILES_FILE)
+    target = Path(directory) / PROFILES_FILE
+    if source.is_file() and source.resolve() != target.resolve():
+        temp = target.with_name(PROFILES_FILE + '.tmp')
+        temp.write_bytes(source.read_bytes())
+        os.chmod(str(temp), 0o600)
+        os.replace(str(temp), str(target))
+
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
@@ -54,8 +91,7 @@ def preflight():
     reply = json.loads(run(['luna-send', '-w', '3000', '-n', '1',
         'luna://com.webos.service.tv.systemproperty/getSystemInfo',
         '{"keys":["modelName","firmwareVersion","sdkVersion"]}']))
-    if reply.get('returnValue') is not True or tuple(reply.get(k) for k in (
-            'modelName', 'firmwareVersion', 'sdkVersion')) != ('OLED48C24LA', '33.31.68', '10.3.1'):
+    if reply.get('returnValue') is not True or not reviewed_tv(reply, 'home-layout'):
         raise RuntimeError('Unreviewed TV/firmware: ' + str(reply))
 
 
@@ -153,6 +189,7 @@ def apply(persistent=False, boot=False):
             raise
     if persistent:
         atomic(SCRIPT, Path(__file__).read_bytes(), 0o700)
+        keep_profiles(ROOT)
         atomic(HOOK, ('#!/bin/sh\n' + MARKER + '\n(python3 ' + str(SCRIPT) +
                       ' boot >' + str(ROOT / 'startup.log') + ' 2>&1) </dev/null >/dev/null 2>&1 &\n').encode(), 0o700)
         print('Startup hook installed: ' + str(HOOK))

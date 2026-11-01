@@ -41,6 +41,43 @@ PROTECTED = {'com.webos.app.home', 'com.webos.app.livetv', 'com.webos.app.gameop
              'com.webos.app.hdmi4', 'com.palm.app.settings', 'org.webosbrew.hbchannel'}
 
 
+REFERENCE_TV = ('OLED48C24LA', '33.31.68', '10.3.1')
+PROFILES_FILE = 'lg-reviewed-profiles.json'
+
+
+def reviewed_tv(info, component):
+    """Exact model/firmware/SDK match: the reference TV, or a maintainer-reviewed profile
+    from profiles/lg-reviewed-profiles.json that lists this component."""
+    key = tuple(info.get(name) for name in ('modelName', 'firmwareVersion', 'sdkVersion'))
+    if key == REFERENCE_TV:
+        return True
+    if not all(isinstance(part, str) and part for part in key):
+        return False
+    try:
+        registry = json.loads(Path(__file__).resolve().with_name(PROFILES_FILE).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return False
+    profiles = registry.get('profiles') if isinstance(registry, dict) else None
+    for profile in profiles if isinstance(profiles, list) else []:
+        if not isinstance(profile, dict) or not isinstance(profile.get('components'), list):
+            continue
+        if (profile.get('modelName'), profile.get('firmwareVersion'), profile.get('sdkVersion')) == key \
+                and component in profile['components']:
+            return True
+    return False
+
+
+def keep_profiles(directory):
+    """Copy an uploaded reviewed-profile registry next to the persistent script."""
+    source = Path(__file__).resolve().with_name(PROFILES_FILE)
+    target = Path(directory) / PROFILES_FILE
+    if source.is_file() and source.resolve() != target.resolve():
+        temp = target.with_name(PROFILES_FILE + '.tmp')
+        temp.write_bytes(source.read_bytes())
+        os.chmod(str(temp), 0o600)
+        os.replace(str(temp), str(target))
+
+
 def luna(service, method, payload):
     result = subprocess.run(['luna-send', '-w', '5000', '-n', '1',
                              'luna://' + service + '/' + method, json.dumps(payload)],
@@ -125,8 +162,7 @@ def plan_files(block_doc, preload_doc, apps):
 def make_plan():
     info = luna('com.webos.service.tv.systemproperty', 'getSystemInfo',
                 {'keys': ['modelName', 'firmwareVersion', 'sdkVersion']})
-    if (info.get('modelName'), info.get('firmwareVersion'), info.get('sdkVersion')) != (
-            'OLED48C24LA', '33.31.68', '10.3.1'):
+    if not reviewed_tv(info, 'hdmi-cleanup'):
         raise RuntimeError('TV identity/version differs from reviewed inventory: ' + json.dumps(info))
     if not BLOCKS.is_file() or not PRELOAD.is_file():
         raise RuntimeError('Expected NLD block list / preload configuration is missing')
@@ -327,6 +363,7 @@ def install_startup(plan):
     repair(plan)
     atomic_write(PERSISTENT, Path(__file__).read_text(encoding='utf-8'))
     os.chmod(str(PERSISTENT), 0o700)
+    keep_profiles(ROOT)
     HOOK.parent.mkdir(parents=True, exist_ok=True)
     atomic_write(HOOK, hook_text(sys.executable))
     os.chmod(str(HOOK), 0o700)

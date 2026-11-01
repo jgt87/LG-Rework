@@ -1,0 +1,48 @@
+name: Device profile
+description: Submit a compatibility report so a maintainer can review your TV model and firmware.
+title: "Device profile: <model>_<firmware>"
+labels: ["device-profile"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Run `.\init.ps1 -Action check` and then `.\init.ps1 -Action bundle`, and attach the zip below.
+        The report contains names, paths, hashes and statuses only. See profiles/README.md.
+  - type: input
+    id: model
+    attributes:
+      label: Model, firmware and webOS SDK
+      placeholder: OLED55C34LA / 03.10.20 / 8.1.0
+    validations:
+      required: true
+  - type: input
+    id: region
+    attributes:
+      label: Country or region the TV is set to
+      placeholder: Netherlands
+  - type: checkboxes
+    id: components
+    attributes:
+      label: Components you want to use
+      options:
+        - label: dashboard
+        - label: home-router
+        - label: hdmi-cleanup
+        - label: alexa-tiles
+        - label: home-layout
+        - label: no-signal-background
+        - label: debloat
+  - type: textarea
+    id: bundle
+    attributes:
+      label: Bundle
+      description: Drag the <model>_<firmware>-profile-submission.zip file here.
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: My TV is rooted with Homebrew Channel, and I understand nothing runs until a maintainer reviews this profile.
+          required: true

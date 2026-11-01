@@ -1,6 +1,6 @@
 {
   "id": "com.local.hdmihome",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "vendor": "Local",
   "type": "web",
   "main": "index.html",

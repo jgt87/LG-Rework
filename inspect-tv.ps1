@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$tvAddress = '192.168.1.44'
+$tvAddress = (& (Join-Path $PSScriptRoot 'tv-address.ps1'))
 $inventoryScript = Join-Path $PSScriptRoot 'inspect-tv.sh'
 $inventoryReport = Join-Path $PSScriptRoot 'tv-inventory.txt'
 Write-Host 'Copying the read-only inventory script to the TV temporary directory.'

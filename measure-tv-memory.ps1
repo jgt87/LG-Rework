@@ -1,6 +1,6 @@
 param([ValidateRange(1,10)][int]$Samples=3,[ValidateRange(1,60)][int]$IntervalSeconds=10)
 $ErrorActionPreference='Stop'
-$memoryTV='192.168.1.44'
+$memoryTV=(& (Join-Path $PSScriptRoot 'tv-address.ps1'))
 $memoryReport=Join-Path $PSScriptRoot 'tv-memory-report.json'
 & scp -O (Join-Path $PSScriptRoot 'measure-tv-memory.py') "root@${memoryTV}:/tmp/lg-measure-memory.py"
 if($LASTEXITCODE -ne 0){throw 'Memory script upload failed.'}

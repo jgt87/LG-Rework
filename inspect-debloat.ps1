@@ -1,5 +1,5 @@
 $ErrorActionPreference='Stop'
-$debloatTV='192.168.1.44'
+$debloatTV=(& (Join-Path $PSScriptRoot 'tv-address.ps1'))
 & scp -O (Join-Path $PSScriptRoot 'inspect-debloat.py') "root@${debloatTV}:/tmp/lg-inspect-debloat.py"
 if($LASTEXITCODE -ne 0){throw 'Inventory upload failed; no inspection executed.'}
 & ssh "root@$debloatTV" 'python3 /tmp/lg-inspect-debloat.py' | Tee-Object -FilePath (Join-Path $PSScriptRoot 'debloat-inventory.json')

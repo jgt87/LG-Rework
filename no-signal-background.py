@@ -12,6 +12,43 @@ BACKUP = ROOT / 'original-state.json'
 KEY = 'noSignalScreenSaver'
 
 
+REFERENCE_TV = ('OLED48C24LA', '33.31.68', '10.3.1')
+PROFILES_FILE = 'lg-reviewed-profiles.json'
+
+
+def reviewed_tv(info, component):
+    """Exact model/firmware/SDK match: the reference TV, or a maintainer-reviewed profile
+    from profiles/lg-reviewed-profiles.json that lists this component."""
+    key = tuple(info.get(name) for name in ('modelName', 'firmwareVersion', 'sdkVersion'))
+    if key == REFERENCE_TV:
+        return True
+    if not all(isinstance(part, str) and part for part in key):
+        return False
+    try:
+        registry = json.loads(Path(__file__).resolve().with_name(PROFILES_FILE).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return False
+    profiles = registry.get('profiles') if isinstance(registry, dict) else None
+    for profile in profiles if isinstance(profiles, list) else []:
+        if not isinstance(profile, dict) or not isinstance(profile.get('components'), list):
+            continue
+        if (profile.get('modelName'), profile.get('firmwareVersion'), profile.get('sdkVersion')) == key \
+                and component in profile['components']:
+            return True
+    return False
+
+
+def keep_profiles(directory):
+    """Copy an uploaded reviewed-profile registry next to the persistent script."""
+    source = Path(__file__).resolve().with_name(PROFILES_FILE)
+    target = Path(directory) / PROFILES_FILE
+    if source.is_file() and source.resolve() != target.resolve():
+        temp = target.with_name(PROFILES_FILE + '.tmp')
+        temp.write_bytes(source.read_bytes())
+        os.chmod(str(temp), 0o600)
+        os.replace(str(temp), str(target))
+
+
 def request(service, method, payload):
     result = subprocess.run(['luna-send', '-w', '3000', '-n', '1',
         'luna://' + service + '/' + method, json.dumps(payload)],
@@ -41,8 +78,7 @@ def main():
         raise RuntimeError('Root required')
     info = request('com.webos.service.tv.systemproperty', 'getSystemInfo',
                    {'keys': ['modelName', 'firmwareVersion', 'sdkVersion']})
-    if [info.get(k) for k in ('modelName', 'firmwareVersion', 'sdkVersion')] != [
-            'OLED48C24LA', '33.31.68', '10.3.1']:
+    if not reviewed_tv(info, 'no-signal-background'):
         raise RuntimeError('Unreviewed TV/firmware')
     value = current()
     if args.action == 'verify':

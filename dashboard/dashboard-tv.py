@@ -15,6 +15,27 @@ APPDIR = Path('/media/developer/apps/usr/palm/applications') / APPID
 IPK = Path('/tmp/lg-hdmi-home.ipk')
 
 
+REFERENCE_MODEL = 'OLED48C24LA'
+PROFILES_FILE = 'lg-reviewed-profiles.json'
+
+
+def reviewed_model(info):
+    """The reference model, or a model with a maintainer-reviewed profile that lists the dashboard.
+    The dashboard only installs a web app, so it checks the model and not the firmware."""
+    model = info.get('modelName')
+    if model == REFERENCE_MODEL:
+        return True
+    try:
+        registry = json.loads(Path(__file__).resolve().with_name(PROFILES_FILE).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return False
+    profiles = registry.get('profiles') if isinstance(registry, dict) else None
+    return isinstance(model, str) and any(
+        isinstance(profile, dict) and profile.get('modelName') == model
+        and isinstance(profile.get('components'), list) and 'dashboard' in profile['components']
+        for profile in (profiles if isinstance(profiles, list) else []))
+
+
 def request(service, method, payload):
     result = subprocess.run(['luna-send', '-w', '8000', '-n', '1',
                              'luna://' + service + '/' + method, json.dumps(payload)],
@@ -107,7 +128,7 @@ def main():
     info = request('com.webos.service.tv.systemproperty', 'getSystemInfo',
                    {'keys': ['modelName', 'sdkVersion', 'firmwareVersion']})
     print('Connected:', info.get('modelName'), info.get('firmwareVersion'), info.get('sdkVersion'), flush=True)
-    if info.get('modelName') != 'OLED48C24LA':
+    if not reviewed_model(info):
         raise RuntimeError('Unexpected TV model')
     if args.action == 'install':
         install(args.version, args.ipk_sha, args.js_sha)

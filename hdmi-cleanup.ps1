@@ -1,14 +1,14 @@
 param([ValidateSet('plan','apply','verify','restore','diagnose','repair','self-test','install-startup','uninstall-startup')][string]$Action = 'plan')
 $ErrorActionPreference = 'Stop'
-$tvAddress = '192.168.1.44'
+$tvAddress = (& (Join-Path $PSScriptRoot 'tv-address.ps1'))
 $cleanupScript = Join-Path $PSScriptRoot 'hdmi-cleanup.py'
 $cleanupReport = Join-Path $PSScriptRoot "hdmi-cleanup-$Action.txt"
-& scp -O $cleanupScript "root@${tvAddress}:/tmp/lg-hdmi-cleanup.py"
+& scp -O $cleanupScript (Join-Path $PSScriptRoot 'profiles\lg-reviewed-profiles.json') "root@${tvAddress}:/tmp/"
 if ($LASTEXITCODE -ne 0) { throw 'Upload failed. No cleanup command was executed.' }
 if ($Action -in @('apply','repair','restore','install-startup','uninstall-startup')) {
-    $remoteCommand = "python3 /tmp/lg-hdmi-cleanup.py self-test && python3 /tmp/lg-hdmi-cleanup.py $Action"
+    $remoteCommand = "python3 /tmp/hdmi-cleanup.py self-test && python3 /tmp/hdmi-cleanup.py $Action"
 } else {
-    $remoteCommand = "python3 /tmp/lg-hdmi-cleanup.py $Action"
+    $remoteCommand = "python3 /tmp/hdmi-cleanup.py $Action"
 }
 & ssh "root@$tvAddress" $remoteCommand | Tee-Object -FilePath $cleanupReport
 $cleanupExitCode = $LASTEXITCODE
