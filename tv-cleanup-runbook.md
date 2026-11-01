@@ -1,6 +1,6 @@
 # LG HDMI dashboard and debloat runbook
 
-Updated: 2026-10-30
+Updated: 2026-11-01
 
 | Item | Value |
 |---|---|
@@ -18,7 +18,7 @@ Updated: 2026-10-30
 |---|---|
 | Dashboard | Version 1.0.3 installed and launch accepted. |
 | Physical Home button | Input Hook saved ID `773` → Launch App → `com.local.hdmihome`. |
-| Dashboard-first router | Older router left HDMI No Signal open. Updated local helper adds one dashboard launch at worker startup and each wake; deployment and reboot test pending. Run `dashboard-home.ps1 -Action enable` to update it. |
+| HDMI-preserving Home router | Deployed: `enable` succeeded, Home Auto Launch off, worker running with both subscriptions and no startup/wake dashboard launch. Physical Xbox CEC startup/wake test still pending. |
 | Tile hiding / preload / promotion cleanup | Startup helper updated successfully; `sportsAlarm` restored to off. |
 | LG Home layout | Trial applied successfully; rows removed and banner hidden. Visual check still required. |
 | Additional service cleanup | Latest trial succeeded: selected units stopped/masked, executable overrides verified, no target processes running. SDX hash unchanged and process running; previously active core services remain active. Nudge remains excluded. **Resume at step 3: physical validation before persistence.** |
@@ -120,17 +120,17 @@ This blocks only `amazon.alexa.view` and `amazon.alexapr` from the launcher and 
 
 ## 5. Reboot and check persistence
 
-To update the dashboard router for the reported No Signal startup issue:
+To deploy direct HDMI-CEC startup/wake:
 
 ```powershell
 .\dashboard-home.ps1 -Action enable
 ```
 
-The updated router opens the dashboard once from LG Home or the initial HDMI app at startup/wake. Later foreground changes cancel the queued launch; it does not continuously take over HDMI. It cannot distinguish live HDMI from No Signal, so an already-running Xbox may be covered once by the dashboard. Restarting/enabling the worker also triggers this one-shot. Original settings backup is retained. Physical startup/wake validation remains required.
+HDMI-CEC startup/wake must go straight to the HDMI source. The router leaves every HDMI source alone, including No Signal, and does not schedule a startup dashboard launch. Re-enable the helper to deploy this change, then verify physically with the Xbox.
 
 Use a **full reboot**, such as Homebrew Channel's reboot option. A remote off/on cycle with Quick Start+ can retain the current session and does not establish cold-boot persistence.
 
-For the dashboard-first test, initially leave the Xbox off. After startup, allow at least **75 seconds** for the background cleanup worker; if it is still running, wait for its log to finish. Then rerun:
+For the CEC startup test, power on the Xbox and confirm the TV opens its HDMI source. After startup, allow at least **75 seconds** for the background cleanup worker; if it is still running, wait for its log to finish. Then rerun:
 
 ```powershell
 .\hdmi-cleanup.ps1 -Action verify
@@ -139,7 +139,7 @@ For the dashboard-first test, initially leave the Xbox off. After startup, allow
 .\dashboard-home.ps1 -Action status
 ```
 
-Repeat the physical checks from step 3. Start the Xbox and confirm CEC switches to HDMI2. LG Home may briefly appear during startup before dashboard routing takes effect.
+Repeat the physical checks from step 3. Start the Xbox and confirm CEC switches to HDMI2. Confirm no dashboard interrupts CEC startup/wake.
 
 ## Recovery and rollback
 

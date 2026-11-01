@@ -48,7 +48,7 @@ Reopen or verify:
 .\dashboard.ps1 -Action verify
 ```
 
-Installing the app alone does not replace LG Home, remap buttons, start at boot, modify picture/audio settings, or alter the existing cleanup. The owner now prefers dashboard-first startup; enable the separate reversible router below for that behavior.
+Installing the app alone does not change startup or remap buttons. The optional router below preserves direct HDMI startup/wake while providing dashboard access through Home.
 
 ## Controls
 
@@ -64,7 +64,7 @@ No HDMI connected/disconnected state is displayed: hardware detection is not imp
 
 For the first trial, use the app tile. In LG Input Hook, open its logs, press Home and confirm the detected button ID (often 773). Add a binding that launches `com.local.hdmihome`. If the interface only offers Execute, use `luna-send -n 1 luna://com.webos.applicationManager/launch '{"id":"com.local.hdmihome"}'`. Save changes. An ordinary web app does not receive the Home key.
 
-## Dashboard-first startup and system Home routing
+## HDMI-preserving startup and system Home routing
 
 Install app version 1.0.3 or later first, then run from `C:\Files\Apps\LG`:
 
@@ -72,9 +72,9 @@ Install app version 1.0.3 or later first, then run from `C:\Files\Apps\LG`:
 .\dashboard-home.ps1 -Action enable
 ```
 
-This runs router regression checks on the TV, preflights foreground/power APIs, backs up the original `homeAutoLaunch` setting, switches it on, and installs `/var/lib/webosbrew/init.d/85-lg-hdmi-home`. A detached Python helper subscribes to foreground and power events. Ordinary routing redirects stock LG Home. At worker startup and each transition to Active, a separate one-shot opens the dashboard from stock Home or an HDMI app, including the No Signal screen. It waits one second after identifying that foreground app, rechecks foreground/power and cancels if another app/input was selected. It expires after ten seconds without a usable foreground and never repeatedly takes over HDMI. CEC, audio, picture and debloat settings are unchanged. Event streams reconnect with bounded backoff; failed launch attempts do not loop continuously.
+This runs router regression checks, backs up the original `homeAutoLaunch` setting, switches it off, and installs `/var/lib/webosbrew/init.d/85-lg-hdmi-home`. The helper redirects stock LG Home to the dashboard, but never launches a dashboard from HDMI or on startup/wake. CEC and all HDMI settings remain unchanged. The physical Home button mapping remains available.
 
-Cold startup may briefly display LG Home or No Signal before the helper is ready. Input Hook handles the physical Home button directly. The one-shot does not distinguish an HDMI signal from No Signal, so it can open the dashboard over an already-running Xbox once at startup. Later CEC/input activity is left alone; a switch to another foreground app during the queued launch cancels it. Re-enabling/restarting the worker also triggers its one-shot. Verify cold startup and standby/wake on the TV.
+HDMI-CEC startup/wake must go straight to the HDMI source. The router leaves every HDMI source alone, including No Signal, and does not schedule a startup dashboard launch. Re-enable the helper to deploy this change, then verify physically with the Xbox.
 
 The dashboard's LG Home control uses a fixed Homebrew Channel execution request to open stock Home with a temporary bypass. It requires the rooted Homebrew service. If that request is denied, use the recovery command below and send the error before changing Luna permissions.
 
@@ -84,7 +84,7 @@ After enabling, restart using Homebrew Channel, then run:
 .\dashboard-home.ps1 -Action status
 ```
 
-Test startup to the dashboard, Home from HDMI2, Xbox/CEC switching without a dashboard takeover, and the dashboard's LG Home escape. A process reported as running does not establish physical remote or wake behavior.
+Test CEC startup directly to HDMI, Home from HDMI2, Xbox/CEC switching without a dashboard takeover, and the dashboard's LG Home escape. A process reported as running does not establish physical remote or wake behavior.
 
 Recovery commands:
 

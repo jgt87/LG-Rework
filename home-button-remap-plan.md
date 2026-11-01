@@ -2,12 +2,12 @@
 
 ## Intended behavior
 
-- Power-on: open our HDMI Home dashboard. The owner explicitly changed the earlier Xbox-first preference to dashboard-first.
+- Power-on: HDMI-CEC goes directly to the HDMI source, without opening a dashboard.
 - Home button: open our HDMI Home dashboard (`com.local.hdmihome`).
 - Dashboard Back button: return to HDMI2.
 - Dashboard LG Home control: open the original LG interface.
 
-The dashboard installer alone does not enable automatic dashboard startup or remap Home. The separate `dashboard-home.ps1 -Action enable` helper switches Home Auto Launch on and redirects system LG Home to our dashboard. Remapping the physical Home button is still handled by LG Input Hook. HDMI-CEC settings remain unchanged so the Xbox can take the input when it starts.
+The dashboard installer alone does not enable automatic dashboard startup or remap Home. The separate `dashboard-home.ps1 -Action enable` helper switches Home Auto Launch off and redirects system LG Home to our dashboard. Remapping the physical Home button is still handled by LG Input Hook. HDMI-CEC settings remain unchanged so the Xbox can take the input when it starts.
 
 ## Prerequisites
 
@@ -36,7 +36,7 @@ The dashboard installer alone does not enable automatic dashboard startup or rem
 2. Select Xbox Series X and confirm it returns to HDMI2.
 3. Open the dashboard again and select LG Home; confirm the original interface remains available.
 4. Test volume, Settings and input switching.
-5. Reboot through Homebrew Channel and verify that startup opens our dashboard. Start the Xbox and verify that its CEC input switch is not reversed by the helper. Confirm Home still opens the dashboard. Allow the input hook to initialize before testing Home.
+5. Reboot through Homebrew Channel and start the Xbox and verify that CEC startup goes straight to HDMI without either dashboard appearing. Confirm Home still opens the dashboard. Allow the input hook to initialize before testing Home.
 
 If Home does not work, inspect Input Hook's logs and confirm the actual button ID, saved action and app ID before changing anything else. Compatibility depends on the installed Input Hook build and TV firmware.
 
@@ -54,16 +54,16 @@ Do not overwrite the entire Input Hook configuration: other button mappings may 
 
 ## Status
 
-LG Input Hook is installed. On 2026-10-30, the physical Home button produced `uinput_code=773` in its Magic Remote log. Saved one binding: ID `773`, action `Launch App`, target `HDMI Home (com.local.hdmihome)`. The interface reported `Successfully saved to /config/keybinds.json`. Physical launch and reboot persistence still need testing. The dashboard-first helper is prepared but has not been installed by the agent.
+LG Input Hook is installed. On 2026-10-30, the physical Home button produced `uinput_code=773` in its Magic Remote log. Saved one binding: ID `773`, action `Launch App`, target `HDMI Home (com.local.hdmihome)`. The interface reported `Successfully saved to /config/keybinds.json`. Physical launch and reboot persistence still need testing. The HDMI-preserving helper is deployed and running (Home Auto Launch off); physical CEC startup/wake verification is pending.
 
 ## Making HDMI Home the main interface
 
 These are separate behaviors:
 
 1. **Physical Home button:** LG Input Hook launches `com.local.hdmihome` before the stock Home screen opens, if the hook works on this firmware.
-2. **Power-on:** the owner requests dashboard-first behavior. The helper changes Home Auto Launch to on, with a saved original value, and redirects system Home events. After the reported No Signal startup gap, it also queues one dashboard launch from the initial Home/HDMI app at worker startup and wake; later foreground changes cancel it. This may cover an already-live HDMI source once. Deploy with `dashboard-home.ps1 -Action enable` and verify physically.
+2. **Power-on:** preserve HDMI-CEC source selection. Home Auto Launch is off and the helper never launches a dashboard at startup/wake, including from No Signal.
 3. **LG Home opened by the system:** a foreground-event helper can redirect stock Home to the dashboard. This may briefly show LG Home. Such a helper needs a deliberate bypass for the dashboard's LG Home recovery control, must not take over HDMI while the Xbox is active, and needs start/stop/status/uninstall commands before installation.
 
 Rooted projects also replace LG Home through a temporary bind mount and app-manager restart. That is a more intrusive approach with firmware-specific behavior; Hearth documents aspect-ratio and stock-Home escape limitations. It is not installed by this project.
 
-The owner selected dashboard-first startup. Implementation: update the dashboard using `.\dashboard.ps1 -Action install`, then enable the helper using `.\dashboard-home.ps1 -Action enable`. Check it with `.\dashboard-home.ps1 -Action status`. Undo it with `.\dashboard-home.ps1 -Action uninstall`; remove the Input Hook mapping separately. Full instructions are in `dashboard/README.md`.
+The current preference is direct HDMI-CEC startup/wake. Deploy the HDMI-preserving helper using `.\dashboard-home.ps1 -Action enable`; Home still opens the dashboard.

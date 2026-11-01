@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reversible dashboard-first startup/wake and stock-Home routing. Leaves CEC configured."""
+"""Reversible HDMI-preserving startup/wake and stock-Home routing. Leaves CEC configured."""
 import argparse
 from contextlib import contextmanager
 import fcntl
@@ -85,38 +85,8 @@ def check_app():
 
 
 def should_redirect(appid, power, bypass, enabled):
-    # Ordinary Home routing does not take over HDMI; startup is a separate one-shot.
+    # HDMI, including CEC startup/wake, must never be redirected.
     return enabled and appid == STOCK and power not in ('suspend', 'active standby', 'screen off') and not bypass
-
-
-class StartupLaunch:
-    """One dashboard attempt per active transition, cancelled by a new foreground choice."""
-    def __init__(self):
-        self.power = None
-        self.pending, self.baseline, self.due, self.deadline = False, None, None, 0
-
-    def observe(self, appid, power, now):
-        if power != self.power:
-            if power == 'active':
-                self.pending, self.baseline, self.due, self.deadline = True, None, None, now + 10
-            else:
-                self.pending, self.due = False, None
-            self.power = power
-        if not self.pending:
-            return
-        allowed = {STOCK} | {'com.webos.app.hdmi' + str(port) for port in range(1, 5)}
-        if now >= self.deadline or (appid and appid not in allowed):
-            self.pending, self.due = False, None
-        elif appid and self.baseline is None:
-            self.baseline, self.due = appid, now + 1
-        elif appid and appid != self.baseline:
-            self.pending, self.due = False, None
-
-    def consume(self, actual, power, bypass, enabled):
-        allowed = (self.pending and actual == self.baseline and power == 'active'
-                   and not bypass and enabled)
-        self.pending, self.due = False, None
-        return allowed
 
 
 def parse_messages(buffer):
@@ -240,10 +210,9 @@ def run():
         streams = [Subscription('foreground', 'luna://com.webos.applicationManager/getForegroundAppInfo'),
                    Subscription('power', 'luna://com.webos.service.tvpower/power/getPowerState')]
         current, power, due, last_launch, heartbeat = '', '', None, -100, 0
-        startup = StartupLaunch()
         redirects, last_error = 0, ''
         clear_bypass()
-        print('Home router started; dashboard-first one-shot enabled for startup/wake.', flush=True)
+        print('Home router started; HDMI startup/wake stays on the source.', flush=True)
         # Initial subscription snapshots are not guaranteed on every firmware.
         try:
             current = foreground()
@@ -294,24 +263,6 @@ def run():
                         if stream.name == 'foreground':
                             current, due = '', None
                 now = time.monotonic()
-                startup.observe(current, power, now)
-                if startup.pending and startup.due is not None and now >= startup.due:
-                    try:
-                        with control_lock(blocking=False):
-                            actual = foreground()
-                            actual_power = request('com.webos.service.tvpower', 'power/getPowerState', {})['state'].lower()
-                            if startup.consume(actual, actual_power, bool(read_bypass()), ENABLED.is_file()):
-                                request('com.webos.applicationManager', 'launch', {'id': APP})
-                                last_launch = now
-                                redirects += 1
-                                due = None
-                                print('Startup/wake: opened HDMI Home once from ' + actual, flush=True)
-                    except BlockingIOError:
-                        pass
-                    except Exception as error:
-                        startup.pending, startup.due = False, None
-                        last_error = str(error)
-                        print('Startup launch skipped:', last_error, flush=True)
                 if due is not None and now >= due:
                     due = None
                     try:
@@ -331,7 +282,6 @@ def run():
                 if now >= heartbeat:
                     write(STATUS, {'pid': os.getpid(), 'time': time.time(), 'foreground': current,
                                    'power': power, 'redirects': redirects, 'lastError': last_error,
-                                   'startupPending': startup.pending,
                                    'subscriptions': {stream.name: stream.proc is not None for stream in streams}})
                     heartbeat = now + 10
         finally:
@@ -394,7 +344,7 @@ def install():
     os.chmod(str(SCRIPT), 0o700)
     HOOK.parent.mkdir(parents=True, exist_ok=True)
     try:
-        home_setting('on')
+        home_setting('off')
         write(ENABLED, 'enabled\n')
         write(HOOK, '#!/bin/sh\n' + MARKER + '\nexec ' + shlex.quote(sys.executable) + ' ' + shlex.quote(str(SCRIPT)) + ' start\n')
         os.chmod(str(HOOK), 0o700)
@@ -408,9 +358,9 @@ def install():
             HOOK.unlink()
         home_setting(value)
         raise
-    print('Enabled dashboard-first Home routing. Original setting backed up to', ORIGINAL)
-    print('CEC and all HDMI settings are unchanged. Dashboard opens once at startup/wake, including from No Signal.')
-    print('A later app/input change cancels the queued startup launch. Subsequent HDMI activity is left alone.')
+    print('Enabled HDMI-preserving Home routing. Original setting backed up to', ORIGINAL)
+    print('Home Auto Launch is off. CEC and all HDMI settings are unchanged.')
+    print('HDMI startup/wake stays on the source, including No Signal. No startup dashboard launch is scheduled.')
     print('LG Home may flash briefly; Input Hook can remap the physical Home button directly.')
 
 
@@ -447,30 +397,13 @@ def self_test():
     check.assertEqual(rest, '{"partial":')
     with check.assertRaises(RuntimeError):
         parse_messages('x' * 65537)
-    initial = StartupLaunch()
-    initial.observe('com.webos.app.hdmi2', 'active', 0)
-    check.assertEqual(initial.due, 1)
-    check.assertTrue(initial.consume('com.webos.app.hdmi2', 'active', False, True))
-    initial.observe('com.webos.app.hdmi2', 'active', 2)
-    check.assertFalse(initial.pending)
-    initial.observe('com.webos.app.hdmi2', 'active standby', 3)
-    initial.observe('com.webos.app.hdmi2', 'active', 4)
-    check.assertTrue(initial.pending)
-    initial.observe('com.webos.app.hdmi1', 'active', 4.5)
-    check.assertFalse(initial.pending)
-    for actual, power, bypass, enabled in [
-            ('com.webos.app.hdmi1', 'active', False, True),
-            ('com.webos.app.hdmi2', 'active standby', False, True),
-            ('com.webos.app.hdmi2', 'active', True, True),
-            ('com.webos.app.hdmi2', 'active', False, False)]:
-        trial = StartupLaunch()
-        trial.observe('com.webos.app.hdmi2', 'active', 0)
-        check.assertFalse(trial.consume(actual, power, bypass, enabled))
-    expiry = StartupLaunch()
-    expiry.observe('', 'active', 0)
-    expiry.observe('com.webos.app.hdmi2', 'active', 11)
-    check.assertFalse(expiry.pending)
-    print('Router regression checks passed: startup/wake one-shot, input-change cancellation, bypass/power/disable guards, streaming replies.')
+    # Every HDMI source must survive all power transitions without dashboard routing.
+    for port in range(1, 5):
+        for power in ['', 'active', 'suspend', 'active standby', 'screen off']:
+            for bypass in [False, True]:
+                check.assertFalse(should_redirect('com.webos.app.hdmi' + str(port), power, bypass, True))
+    print('Router regression checks passed: HDMI startup/wake preservation, Home routing, bypass/power/disable guards, streaming replies.')
+
 
 
 def main():
