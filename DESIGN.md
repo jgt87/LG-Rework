@@ -104,6 +104,8 @@ The focused Xbox state uses a dark green base (#0d1b12) with a softer lighter-gr
 
 **The Flat Console Rule.** Use surface tone, outlines and restrained focus scaling for hierarchy; keep controls shadow-free.
 
+**Layers.** Fixed layers take their z-index from three band tokens: `--z-banner` (4, preview banner), `--z-notice` (5, status notice) and `--z-cover` (10, sleep cover, above everything). Inside a tile, the focused tile (2) and its copy above the console art (1) are local stacking only.
+
 ## Shapes
 
 Sources use the source radius; utilities use the tool radius. Both reserve a transparent border (3px) for focus. Xbox focus scales to (1.02), alternate focus to (1.035), while utility focus retains its size. Outline symbols use rounded caps and joins with stroke (1.7). Back uses a compact outlined keycap with radius (5px). Shortcut dots are circular.

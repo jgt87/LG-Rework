@@ -264,6 +264,17 @@ class LauncherTests(unittest.TestCase):
                 self.assertIn("tv-address.ps1", text, path.name)
                 self.assertNotIn('192.168.', text, path.name)
 
+    def test_launchers_write_reports_as_utf8(self):
+        # Windows PowerShell 5.1's Tee-Object and Set-Content -Encoding utf8 wrote every report
+        # as UTF-16 or with a BOM (audit, 2026-11-26); tv-report.ps1 writes UTF-8 without one.
+        for path in ROOT.glob('*.ps1'):
+            code = '\n'.join(line for line in path.read_text(encoding='utf-8').splitlines()
+                             if not line.lstrip().startswith('#'))
+            self.assertNotIn('Tee-Object', code, path.name)
+            self.assertIsNone(re.search(r'Set-Content[^\n]*-Encoding\s+utf8', code), path.name)
+            self.assertNotIn('Get-FileHash', code, path.name)
+            self.assertNotIn('Compress-Archive', code, path.name)
+
     def test_guarded_launchers_upload_registry_with_matching_script_names(self):
         for name in self.UPLOADS:
             text = (ROOT / name).read_text(encoding='utf-8')

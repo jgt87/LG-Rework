@@ -13,6 +13,6 @@ echo '=== Existing Home mounts ==='
 awk '/com.webos.app.home|glasshouse-home|lg-home/ { print }' /proc/mounts
 echo '=== End; no TV settings changed ==='
 '@
-& ssh "root@$tvAddress" $remoteCommand | Tee-Object -FilePath $report
+& ssh "root@$tvAddress" $remoteCommand | & (Join-Path $PSScriptRoot 'tv-report.ps1') -Path $report
 if ($LASTEXITCODE -ne 0) { throw 'Read-only Home layout inventory failed.' }
 Write-Host "Report saved: $report"

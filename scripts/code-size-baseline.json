@@ -1,0 +1,39 @@
+{
+  "alexa-tiles.py": {
+    "complexity": 2
+  },
+  "dashboard/build.mjs": {
+    "complexity": 1
+  },
+  "dashboard/dashboard-tv.py": {
+    "complexity": 1
+  },
+  "dashboard/home-router.py": {
+    "complexity": 4,
+    "max-lines-per-function": 1
+  },
+  "debloat-tv.py": {
+    "complexity": 6
+  },
+  "hdmi-cleanup.py": {
+    "complexity": 5
+  },
+  "init-tv.py": {
+    "complexity": 3
+  },
+  "inspect-debloat.py": {
+    "complexity": 1
+  },
+  "inspect-no-signal.py": {
+    "complexity": 1
+  },
+  "lg-home-layout.py": {
+    "complexity": 2
+  },
+  "measure-tv-memory.py": {
+    "complexity": 1
+  },
+  "no-signal-background.py": {
+    "complexity": 2
+  }
+}

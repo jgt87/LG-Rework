@@ -16,7 +16,8 @@ Updated: 2026-11-01
 
 | Component | Recorded state |
 |---|---|
-| Dashboard | Version 1.0.3 installed and launch accepted. |
+| Dashboard | Version 1.0.3 installed and launch accepted. Version 1.0.15 is built in `dashboard/dist/`, not yet installed: see "Check the 2026-11-26 audit changes". |
+| Launcher reports (2026-11-26) | Launchers now save reports as UTF-8 and start the TV-side Python with `python3 -I`. Not yet run on the TV: see "Check the 2026-11-26 audit changes". |
 | Physical Home button | Input Hook saved ID `773` → Launch App → `com.local.hdmihome`. |
 | HDMI-preserving Home router | Deployed: `enable` succeeded, Home Auto Launch off, worker running with both subscriptions and no startup/wake dashboard launch. Physical Xbox CEC startup/wake test still pending. |
 | Tile hiding / preload / promotion cleanup | Startup helper updated successfully; `sportsAlarm` restored to off. |
@@ -30,6 +31,42 @@ Commands below run in PowerShell from the working folder. SSH/SCP will ask for t
 ```powershell
 Set-Location C:\Files\Apps\LG
 ```
+
+## Check the 2026-11-26 audit changes
+
+Run this once, whenever convenient. Steps 1–3 only read from the TV; step 4 installs dashboard 1.0.15, which looks the same as before. Update the two "2026-11-26" rows in the table above when done.
+
+1. **Launcher report and `python3 -I`** (read-only plan):
+
+   ```powershell
+   C:\Files\Apps\LG\hdmi-cleanup.ps1 -Action plan
+   [IO.File]::ReadAllBytes('C:\Files\Apps\LG\hdmi-cleanup-plan.txt')[0..2]
+   ```
+
+   Expected: the plan prints as before, with no `Unknown option: -I` or Python usage error. The three bytes must not be `255 254 …` (UTF-16) or `239 187 191` (byte-order mark); a plain report starts with the first letter of its text.
+
+2. **Submission zip** (read-only `check`, then a local zip):
+
+   ```powershell
+   C:\Files\Apps\LG\init.ps1 -Action check
+   C:\Files\Apps\LG\init.ps1 -Action bundle
+   tar -tf (Get-ChildItem C:\Files\Apps\LG\*-profile-submission.zip | Select-Object -First 1).FullName
+   ```
+
+   Expected: every component shows `matches`, and `init-check.txt` passes the byte check from step 1. The zip lists its two files without a `\` in their names.
+
+3. **Memory report (optional)**: `C:\Files\Apps\LG\measure-tv-memory.ps1` replaces `tv-memory-report.json` (captured data, D-001) with a new read-only sample. Run it only if a fresh sample is wanted; the new file must not start with `239 187 191`.
+
+4. **Install dashboard 1.0.15**:
+
+   ```powershell
+   C:\Files\Apps\LG\dashboard.ps1 -Action install
+   C:\Files\Apps\LG\dashboard.ps1 -Action verify
+   ```
+
+   Expected: the install reports both hashes matching `dashboard/dist/build-manifest.json` (IPK `d58190e0…`, `app.js` `0f28eca0…`). Press Home: the dashboard looks and moves exactly as before; the preview banner, status notice and sleep cover still sit above the tiles. If anything is off, tell the agent: the 1.0.14 IPK is still in `dashboard/dist/`, but `build-manifest.json` now names 1.0.15, so going back means rebuilding 1.0.14 from the last commit before running `install`.
+
+Afterwards, give the agent the new `.txt` reports to read back.
 
 ## 1. Check the LG Home layout trial
 

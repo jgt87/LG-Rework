@@ -6,11 +6,11 @@ $cleanupReport = Join-Path $PSScriptRoot "hdmi-cleanup-$Action.txt"
 & scp -O $cleanupScript (Join-Path $PSScriptRoot 'profiles\lg-reviewed-profiles.json') "root@${tvAddress}:/tmp/"
 if ($LASTEXITCODE -ne 0) { throw 'Upload failed. No cleanup command was executed.' }
 if ($Action -in @('apply','repair','restore','install-startup','uninstall-startup')) {
-    $remoteCommand = "python3 /tmp/hdmi-cleanup.py self-test && python3 /tmp/hdmi-cleanup.py $Action"
+    $remoteCommand = "python3 -I /tmp/hdmi-cleanup.py self-test && python3 -I /tmp/hdmi-cleanup.py $Action"
 } else {
-    $remoteCommand = "python3 /tmp/hdmi-cleanup.py $Action"
+    $remoteCommand = "python3 -I /tmp/hdmi-cleanup.py $Action"
 }
-& ssh "root@$tvAddress" $remoteCommand | Tee-Object -FilePath $cleanupReport
+& ssh "root@$tvAddress" $remoteCommand | & (Join-Path $PSScriptRoot 'tv-report.ps1') -Path $cleanupReport
 $cleanupExitCode = $LASTEXITCODE
 if ($Action -eq 'apply' -or $Action -eq 'restore') {
     $backupPath = Join-Path $PSScriptRoot 'hdmi-cleanup-original-state.json'

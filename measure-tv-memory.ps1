@@ -5,11 +5,11 @@ $memoryReport=Join-Path $PSScriptRoot 'tv-memory-report.json'
 & scp -O (Join-Path $PSScriptRoot 'measure-tv-memory.py') "root@${memoryTV}:/tmp/lg-measure-memory.py"
 if($LASTEXITCODE -ne 0){throw 'Memory script upload failed.'}
 Write-Host "Taking $Samples read-only samples, $IntervalSeconds seconds apart. Leave the dashboard open."
-$memoryOutput=& ssh "root@$memoryTV" "python3 /tmp/lg-measure-memory.py --samples $Samples --interval $IntervalSeconds"
+$memoryOutput=& ssh "root@$memoryTV" "python3 -I /tmp/lg-measure-memory.py --samples $Samples --interval $IntervalSeconds"
 if($LASTEXITCODE -ne 0){throw 'Memory measurement failed.'}
 $memoryText=$memoryOutput -join "`n"
 $memoryData=$memoryText | ConvertFrom-Json
-$memoryText | Set-Content -LiteralPath $memoryReport -Encoding utf8
+[IO.File]::WriteAllText($memoryReport, $memoryText + "`n", (New-Object Text.UTF8Encoding $false))
 $memorySummary=foreach($memorySample in $memoryData.samples){
     [pscustomobject]@{
         UptimeSeconds=[Math]::Round($memorySample.uptime_seconds)

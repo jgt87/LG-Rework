@@ -53,8 +53,8 @@ if ($Action -eq 'connect') {
     Write-Host 'Checking root SSH access. Enter the TV root password when asked (twice: upload, then check).'
     & scp -O (Join-Path $PSScriptRoot 'init-tv.py') "root@${Address}:/tmp/"
     if ($LASTEXITCODE -ne 0) { throw 'SSH upload failed. Enable SSH in Homebrew Channel settings and check the address.' }
-    $output = & ssh "root@$Address" 'python3 /tmp/init-tv.py probe'
-    if ($LASTEXITCODE -ne 0) { throw 'Connected, but python3 /tmp/init-tv.py did not run. The scripts need python3 on the TV.' }
+    $output = & ssh "root@$Address" 'python3 -I /tmp/init-tv.py probe'
+    if ($LASTEXITCODE -ne 0) { throw 'Connected, but python3 -I /tmp/init-tv.py did not run. The scripts need python3 on the TV.' }
     $probe = ($output -join "`n") | ConvertFrom-Json
     $tv = $probe.tv
     $report = @(
@@ -64,7 +64,7 @@ if ($Action -eq 'connect') {
         "Homebrew startup hooks: $(if ($probe.homebrewInit) { 'yes' } else { 'no' })"
         "TV: $($tv.modelName) / firmware $($tv.firmwareVersion) / SDK $($tv.sdkVersion)"
     )
-    $report | Tee-Object -FilePath (Join-Path $PSScriptRoot 'init-connect.txt')
+    $report | & (Join-Path $PSScriptRoot 'tv-report.ps1') -Path (Join-Path $PSScriptRoot 'init-connect.txt')
     if ($probe.uid -ne 0) { throw 'Connect as root. The scripts need the Homebrew Channel root shell.' }
     if (-not $tv) { throw "The TV did not report its model and firmware: $($probe.error)" }
     Show-Status $tv
@@ -87,7 +87,7 @@ if ($Action -eq 'check') {
     Write-Host "Uploading the read-only check to $tvAddress (nothing on the TV is changed)."
     & scp -O @upload "root@${tvAddress}:/tmp/"
     if ($LASTEXITCODE -ne 0) { throw 'Upload failed. Run .\init.ps1 -Action connect first.' }
-    $output = & ssh "root@$tvAddress" 'python3 /tmp/init-tv.py'
+    $output = & ssh "root@$tvAddress" 'python3 -I /tmp/init-tv.py'
     if ($LASTEXITCODE -ne 0) { throw 'The compatibility check failed on the TV; see the message above.' }
     $text = ($output -join "`n") + "`n"
     $result = $text | ConvertFrom-Json
@@ -108,7 +108,7 @@ if ($Action -eq 'check') {
             Notes     = if ($notMatching.Count) { ($notMatching | ForEach-Object { $_.check }) -join '; ' } else { '' }
         }
     }
-    $rows | Format-Table -AutoSize -Wrap | Out-String -Width 200 | Tee-Object -FilePath (Join-Path $PSScriptRoot 'init-check.txt')
+    $rows | Format-Table -AutoSize -Wrap | Out-String -Width 200 | & (Join-Path $PSScriptRoot 'tv-report.ps1') -Path (Join-Path $PSScriptRoot 'init-check.txt')
     Write-Host "Report saved: profiles\$($result.profileId)\compatibility-report.json"
     Write-Host 'matches = everything this component touches looks the same as on the reviewed TV.'
     Write-Host 'differs/missing = a maintainer has to review it, and may need to change the script, before it can run.'
@@ -149,7 +149,9 @@ if ($Action -eq 'bundle') {
     Save-Text $summaryFile (($lines -join "`n") + "`n")
     $zip = Join-Path $PSScriptRoot "$id-profile-submission.zip"
     if (Test-Path -LiteralPath $zip) { Remove-Item -LiteralPath $zip }
-    Compress-Archive -Path $reportFile, $summaryFile -DestinationPath $zip
+    # Windows tar (bsdtar) writes zip entries with '/'; Compress-Archive writes '\' in 5.1.
+    & (Join-Path $env:SystemRoot 'System32\tar.exe') -a -c -f $zip -C $folder (Split-Path -Leaf $reportFile) (Split-Path -Leaf $summaryFile)
+    if ($LASTEXITCODE -ne 0) { throw 'Could not create the submission zip.' }
     Write-Host "Bundle saved: $zip"
     Write-Host 'It holds only the compatibility report and summary: names, paths, hashes and statuses.'
     Write-Host 'Submit it for review: https://github.com/jgt87/LG-Rework/issues/new?template=device-profile.yml'

@@ -16,5 +16,6 @@ CLAUDE.md
 device.local.json
 *-profile-submission.zip
 __pycache__/
+.pytest_cache/
 .repowise/
 .claude/

@@ -1,11 +1,16 @@
 {
   "name": "lg-hdmi-home",
   "private": true,
-  "version": "1.0.14",
+  "version": "1.0.15",
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
     "test": "node --test tests/dashboard.test.mjs",
-    "preview": "node preview.mjs"
+    "preview": "node preview.mjs",
+    "lint": "node ../scripts/check-code-size.mjs --reader",
+    "check:design": "node scripts/design-checks.mjs --root . --config design-check.json --a11y"
+  },
+  "devDependencies": {
+    "axe-core": "4.14.1"
   }
 }

@@ -32,6 +32,8 @@ Version 1.0.13 reduces focus expansion from 160ms to 80ms with a faster-start ea
 
 Version 1.0.14 adds onboarding for other TV models. The installer and the Home router accept a TV listed in `profiles/lg-reviewed-profiles.json` as well as the reference TV, and the launchers read the TV address saved by `init.ps1 -Action connect`. The app itself is unchanged.
 
+Version 1.0.15 gives the fixed layers (preview banner, status notice, sleep cover) named z-index tokens and sizes the portrait layout to the dynamic viewport height (`100dvh`). Nothing looks different on the TV. The build now writes the IPK and manifest through a temporary file, so an interrupted build cannot leave a partial package.
+
 Version 1.0.5 applies `font-variant-numeric: tabular-nums` to the entire date/time group, so both the date and clock inherit equal-width digits.
 
 In PowerShell on the computer, with the TV awake and Homebrew Channel SSH enabled:
@@ -113,14 +115,18 @@ Availability varies by TV/firmware. See [LG's instructions](https://www.lg.com/u
 
 ## Build and local checks
 
-Node.js is the only build prerequisite; there are no package dependencies.
+Node.js is the only build prerequisite; the app and its package have no dependencies. The rendered checks use `axe-core`, a dev-only dependency that never enters the IPK: run `npm install` once before `npm run check:design`.
 
 ```powershell
 cd C:\Files\Apps\LG\dashboard
 node build.mjs
 node --test tests/dashboard.test.mjs
+npm run lint
+npm run check:design
 node preview.mjs
 ```
+
+`npm run check:design` serves this folder in preview mode on test port 9570 and runs the rendered design checks, the control-row check and an axe WCAG A/AA scan; it never contacts the TV.
 
 Browser preview: http://127.0.0.1:8787/?preview=1. Preview messages simulate launches; they never connect to a TV. TV-size and narrow screenshots plus REA capture evidence are in `artifacts/`.
 

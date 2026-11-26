@@ -62,7 +62,8 @@ data.push(['usr/palm/packages/'+manifest.id+'/packageinfo.json',Buffer.from(JSON
 const control=Buffer.from(`Package: ${manifest.id}\nVersion: ${manifest.version}\nSection: misc\nPriority: optional\nArchitecture: all\nInstalled-Size: ${assets.reduce((sum,[,bytes])=>sum+bytes.length,0)}\nMaintainer: Local\nDescription: Local HDMI source selector for webOS TV.\nwebOS-Package-Format-Version: 2\nwebOS-Packager-Version: 1.0.0\n`);
 const ipk=ar([['debian-binary',Buffer.from('2.0\n')],['control.tar.gz',zlib.gzipSync(tar([['control',control]]))],['data.tar.gz',zlib.gzipSync(tar(data))]]);
 const output=path.join(out,`${manifest.id}_${manifest.version}_all.ipk`);
-fs.writeFileSync(output,ipk);
-fs.writeFileSync(path.join(out,'build-manifest.json'),JSON.stringify({id:manifest.id,version:manifest.version,ipk:path.basename(output),sha256:crypto.createHash('sha256').update(ipk).digest('hex'),appjs_sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'app.js'))).digest('hex')},null,2)+'\n');
+const writeAtomic=(file,bytes)=>{const tmp=file+'.tmp';fs.writeFileSync(tmp,bytes);fs.renameSync(tmp,file);};
+writeAtomic(output,ipk);
+writeAtomic(path.join(out,'build-manifest.json'),JSON.stringify({id:manifest.id,version:manifest.version,ipk:path.basename(output),sha256:crypto.createHash('sha256').update(ipk).digest('hex'),appjs_sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(root,'app.js'))).digest('hex')},null,2)+'\n');
 console.log(`Built ${output} (${ipk.length} bytes; no runtime dependencies)`);
 export {tar,ar,crc32};

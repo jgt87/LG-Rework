@@ -1,0 +1,21 @@
+{
+  "_help": "Rendered checks for the dashboard: npm run check:design (serves this folder on the test port in base, in preview mode; never the TV). Every key is documented in scripts/check-design-rules.mjs; vendored and acceptRules are read by the CommonShared audit.",
+  "base": "http://127.0.0.1:9570",
+  "primary": ".btn--primary",
+  "controls": "button",
+  "desktop": [[1920, 1080], [1440, 900]],
+  "narrow": [[720, 900], [390, 844]],
+  "touch": [390, 844],
+  "views": [
+    { "name": "home", "path": "/index.html?preview=1", "ready": "#xbox", "main": "#xbox", "fill": true, "touch": false }
+  ],
+  "vendored": ["dashboard/scripts/"],
+  "acceptRules": {
+    "ui:spacing-on-4px-steps-2-4": "D-002",
+    "design:no-decorative-gradients-gradient-text-glows": "D-003",
+    "ui:one-global-focus-visible-2px-solid": "D-004",
+    "interaction:user-select-none-on-the-canvas": "D-005",
+    "code:keep-functions-80-lines-and-cyclomatic": "D-006",
+    "interaction:press-feedback-only-paints-colour-opacity": "D-009"
+  }
+}
